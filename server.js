@@ -1,74 +1,50 @@
-const bodyParser = require("body-parser")
 const express = require("express")
-const app = express()
-const sqlite3 = require("sqlite3").verbose()
-const db = new sqlite3.Database("my-database.db")
+const bodyParser = require("body-parser")
 const cors = require("cors")
+const { Sequelize } = require("./models")
+const UserRoutes = require("./Routes/UserRoutes")
+const UserModel = require("./models/user")
 
-db.serialize(() => {
-    db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)');
+
+const sequelize = new Sequelize( {
+    dialect: "sqlite",
+    storage: "my-database.db"
 })
 
+const User = UserModel(sequelize)
+
+const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-const PORT = process.env.PORT || 3000
+const syncDB = async  () => {
+    await sequelize.sync().then(() => {
+        console.log("DB synced")
+        //listening to PORT, spinning up the server
+        const PORT = process.env.PORT || 3000
+        
+        app.listen(PORT, () => {
+            console.log(`Server is listening on port ${PORT}`)
+        })
+    })
+}
+syncDB()
 
+
+//now i will define the routes of the incoming apis
+app.use("/users",  UserRoutes)
 app.get("/", async (req, res) => {
     try {
-        res.send("Welcome to the SQLite Server!")
+        const users = await User.findAll()
+        res.status(200).json({
+            message: "Fetched all users",
+            users: users
+        })
     }
     catch (err) {
         res.status(500).json({
-            err: err,
-            msg: "Internal Server Error"
+            message: "Internal Server Error",
+            error: err
         })
     }
 })
-
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`)
-})
-
-// Close the database connection when the app exits
-process.on('SIGINT', () => {
-    db.close((err) => {
-      if (err) {
-        console.error('Error closing the database:', err.message);
-      } else {
-        console.log('Database closed');
-      }
-      process.exit(0);
-    });
-  });
-
-  // Create a new user
-    app.post('/create-user', (req, res) => {
-    const { name } = req.body;
-    console.log(name)
-    if (!name) {
-      return res.status(400).json({ error: 'Name is required' });
-    }
-  
-    db.run('INSERT INTO users (name) VALUES (?)', [name], function(err) {
-      if (err) {
-        return res.status(500).json({ error: 'Failed to create user' });
-      }
-      
-      res.status(201).json({ id: this.lastID, name });
-    });
-  });
-  
-  // Get all users
-  app.get('/users', (req, res) => {
-    db.all('SELECT * FROM users', (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: 'Failed to fetch users' });
-      }
-      
-      res.json(rows);
-    });
-  });
-  
-  // Define other routes as needed
-  
