@@ -65,7 +65,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", UserRoutes)
 app.use("/chatbots", ChatbotRoutes)
 app.use("/endusers", EnduserRoutes)
-app.use("/conversation", ConversationRoutes)
+app.use("/conversations", ConversationRoutes)
 
 app.get("/", async (req, res) => {
   try {

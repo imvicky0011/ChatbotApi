@@ -12,7 +12,11 @@ const ConversationController = {
         try {
             const {conversationId} = req.params
             
-            const conversation = await Conversation.findbyPk(conversationId)
+            const conversation = await Conversation.findOne({
+                where: {
+                    id: conversationId
+                }
+            })
 
             if(!conversation) {
                 return res.status(200).json({
@@ -24,6 +28,10 @@ const ConversationController = {
                 where : {
                     id: conversationId
                 }
+            })
+
+            res.status(200).json({
+                message: "Conversation Deleted Successfully"
             })
         }
         catch(err) {
@@ -38,18 +46,24 @@ const ConversationController = {
         //only end user an update the conversations, because it belongs to the enduser
         try {
             const {conversationId} = req.params
-            const {enduserId, title, status} = req.body;
+            const {title, status} = req.body;
+
             
-            const conversation = await Conversation.findAll({
+            const conversation = await Conversation.findOne({
                 where: {
                     id: conversationId
                 }
             })
-
+            console.log("are we here? 11")
+            if(!conversation) {
+                return res.status(400).json({
+                    message: "Conversation does not exist"
+                })
+            }
             //authorize if the conversation belongs to the enduser
 
-            conversation.title = title,
-            conversation.status = status
+            conversation.title = title;
+            conversation.status = status;
 
             await conversation.save()
 
@@ -69,10 +83,14 @@ const ConversationController = {
     getConversation: async (req, res) => {
         try {
             const {conversationId} = req.params
-            const {enduserId} = req.body;
             
-            const conversation = await Conversation.findbyPk(conversationId)
-
+            const conversation = await Conversation.findAll({
+                where: {
+                    id: conversationId
+                }
+            })
+            
+            console.log("Am i here?")
             //authorize if the conversation belongs to the enduser
             if(!conversation) {
                 return res.status(400).json({

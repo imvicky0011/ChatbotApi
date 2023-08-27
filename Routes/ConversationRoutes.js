@@ -9,7 +9,7 @@ const router = require("express").Router()
 
 router.get("/:conversationId", getConversation)
 
-router.put("/conversationId", updateConversation)
+router.put("/:conversationId", updateConversation)
 
 router.delete("/:conversationId", deleteConversation)
 
