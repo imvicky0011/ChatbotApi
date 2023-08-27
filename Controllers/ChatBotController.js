@@ -1,4 +1,4 @@
-const {models: {User, Chatbot} } = require("../models")
+const {models: {User, Chatbot, Conversation, Enduser} } = require("../models")
 const chatbot = require("../models/chatbot")
 
 // const {deleteMyChatbot, updateMyChatbot, getMyChatbot} = require("../Controllers/ChatBotController")
@@ -80,7 +80,7 @@ const ChatBotController = {
             })
 
             res.status(200).json({
-                message: "Chatbot Fetched Successfully!",
+                message: "Chatbot Deleted Successfully!",
                 chatbot: chatbot
             })
         }
@@ -133,7 +133,66 @@ const ChatBotController = {
                 error: err
             })
         }
-    }
+    },
+
+    createConversation: async (req, res) => {
+        console.log("here in the create conversation route")
+        try {
+            const {enduserId, title, status} = req.body
+            const {chatbotId} = req.params
+
+            const enduser = await Enduser.findByPk(enduserId)
+
+            if(!enduser) {
+                return res.status(400).json({
+                    message: "End User not found for this enduserId"
+                })
+            }
+
+            const conversation = await Conversation.create({
+                title: title,
+                enduserId: enduserId,
+                chatbotId: chatbotId,
+                status: status
+            })
+
+            res.status(201).json({
+                message: "Conversatin Created Successfully!",
+                conversation: conversation
+            })
+        }
+        catch (err) {
+            res.status(500).json({
+                message: "Internal Server Error",
+                error: err
+            })
+        }
+        
+    },
+
+    getAllConversations: async (req, res) => {
+        console.log("here, trying to fetch all the conversation belonging to a particular chatbot")
+        try {
+            const {chatbotId} = req.params
+
+            const conversations = await Conversation.findAll({
+                where: {
+                    chatbotId: chatbotId
+                },
+            })
+
+            res.status(201).json({
+                message: "Conversation of particular chatbot Fetched Successfully!",
+                conversations: conversations
+            })
+        }
+        catch (err) {
+            res.status(500).json({
+                message: "Internal Server Error",
+                error: err
+            })
+        }
+    },
 }
 
 module.exports = ChatBotController

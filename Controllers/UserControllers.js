@@ -126,6 +126,7 @@ const UserControllers = {
 
     createChatbot: async (req, res) => {
         const {userId} = req.params
+        const {name} = req.body
         try {
             const user = await User.findByPk(userId)
 
@@ -136,6 +137,7 @@ const UserControllers = {
             }
 
             const chatbot = await Chatbot.create({
+                name: name,
                 userId: userId
             })
 

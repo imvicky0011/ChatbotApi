@@ -4,7 +4,8 @@ const cors = require("cors");
 const db = require("./models");
 const UserRoutes = require("./Routes/UserRoutes")
 const ChatbotRoutes = require("./Routes/ChatbotRoutes")
-const EnduserRoutes = require("./Routes/EnduserRoutes")
+const EnduserRoutes = require("./Routes/EnduserRoutes");
+const ConversationRoutes = require("./Routes/ConversationRoutes")
 
 const app = express();
 app.use(cors());
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", UserRoutes)
 app.use("/chatbots", ChatbotRoutes)
 app.use("/endusers", EnduserRoutes)
+app.use("/conversation", ConversationRoutes)
 
 app.get("/", async (req, res) => {
   try {
