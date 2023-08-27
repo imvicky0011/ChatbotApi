@@ -1,50 +1,40 @@
-const express = require("express")
-const bodyParser = require("body-parser")
-const cors = require("cors")
-const { Sequelize } = require("./models")
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const db = require("./models");
 const UserRoutes = require("./Routes/UserRoutes")
-const UserModel = require("./models/user")
+const ChatbotRoutes = require("./Routes/ChatbotRoutes")
 
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
-const sequelize = new Sequelize( {
-    dialect: "sqlite",
-    storage: "my-database.db"
-})
+(async () => {
+  try {
+    await db.sequelize.sync({sync: true});
+    console.log("Database synced successfully");
 
-const User = UserModel(sequelize)
+    app.listen(3000, () => {
+      console.log("Server running on port 3000");
+    });
+  
+  } catch (err) {
+    console.error("Error syncing database:", err);
+  }
+})();
 
-const app = express()
-app.use(cors())
-app.use(bodyParser.json())
+// Define your routes here
+app.use("/users", UserRoutes)
+app.use("/chatbots", ChatbotRoutes)
 
-const syncDB = async  () => {
-    await sequelize.sync().then(() => {
-        console.log("DB synced")
-        //listening to PORT, spinning up the server
-        const PORT = process.env.PORT || 3000
-        
-        app.listen(PORT, () => {
-            console.log(`Server is listening on port ${PORT}`)
-        })
-    })
-}
-syncDB()
-
-
-//now i will define the routes of the incoming apis
-app.use("/users",  UserRoutes)
 app.get("/", async (req, res) => {
-    try {
-        const users = await User.findAll()
-        res.status(200).json({
-            message: "Fetched all users",
-            users: users
-        })
-    }
-    catch (err) {
-        res.status(500).json({
-            message: "Internal Server Error",
-            error: err
-        })
-    }
-})
+  try {
+    res.send("Welcome to the server!");
+  } catch (err) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: err,
+    });
+  }
+});
