@@ -13,7 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 
 (async () => {
   try {
-    await db.sequelize.sync({sync: true});
+    await db.sequelize.sync();
+    
+    console.log(typeof(db.models.Chatbot))
+   
     console.log("Database synced successfully");
 
     app.listen(3000, () => {

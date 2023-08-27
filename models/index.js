@@ -11,22 +11,22 @@ const db = {}
 
 db.sequelize = sequelize
 db.models = {}
-
+console.log("HERE")
 // Define User, Chatbot, Enduser, and Conversation models
 const User = require("./user")(sequelize, Sequelize.DataTypes)
 const Chatbot = require("./chatbot")(sequelize, Sequelize.DataTypes)
 const Enduser = require("./enduser")(sequelize, Sequelize.DataTypes)
 const Conversation = require("./conversation")(sequelize, Sequelize.DataTypes);
 
+console.log(User)
 // Define associations
-User.hasMany(Chatbot); // User has many Chatbots
+// User.hasMany(Chatbot); // User has many Chatbots
 Chatbot.belongsTo(User, { foreignKey: "userId" }); // Chatbot belongs to a User
 
 // A Conversation belongs to a Chatbot
 Conversation.belongsTo(Chatbot, { foreignKey: 'chatbotId', onDelete: 'CASCADE' });
 
 // A Conversation belongs to an EndUser
-Conversation.belongsTo(Enduser, { foreignKey: 'endUserId', onDelete: 'CASCADE' });
 
 // An EndUser can have many Conversations
 Enduser.hasMany(Conversation, { foreignKey: 'endUserId', onDelete: 'CASCADE' });

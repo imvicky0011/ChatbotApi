@@ -5,15 +5,14 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.STRING,
           allowNull: false,
         },
+        status: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+        },
         chatbotId: {
           type: DataTypes.INTEGER,
           allowNull: false,
         },
-        enduserId: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-        },
-
       },
 
       {
