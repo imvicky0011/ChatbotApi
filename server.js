@@ -46,7 +46,7 @@ app.use(express.urlencoded({ extended: true }));
 
 (async () => {
   try {
-    await db.sequelize.sync();
+    await db.sequelize.sync({alert: true});
     
     console.log(typeof(db.models.Chatbot))
    

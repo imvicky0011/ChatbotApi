@@ -140,7 +140,7 @@ const ChatBotController = {
         try {
             const {enduserId, title, status} = req.body
             const {chatbotId} = req.params
-
+            console.log(enduserId)
             const enduser = await Enduser.findByPk(enduserId)
 
             if(!enduser) {
@@ -156,6 +156,8 @@ const ChatBotController = {
                 status: status
             })
 
+            console.log(conversation)
+            
             res.status(201).json({
                 message: "Conversatin Created Successfully!",
                 conversation: conversation

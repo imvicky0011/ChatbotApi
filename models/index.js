@@ -21,15 +21,16 @@ const Conversation = require("./conversation")(sequelize, Sequelize.DataTypes);
 console.log(User)
 // Define associations
 // User.hasMany(Chatbot); // User has many Chatbots
-Chatbot.belongsTo(User, { foreignKey: "userId" }); // Chatbot belongs to a User
+Chatbot.belongsTo(User, { foreignKey: "userId", onDelete: 'CASCADE' }); // Chatbot belongs to a User
 
 // A Conversation belongs to a Chatbot
 Conversation.belongsTo(Chatbot, { foreignKey: 'chatbotId', onDelete: 'CASCADE' });
 
 // A Conversation belongs to an EndUser
+Conversation.belongsTo(Enduser, { foreignKey: 'enduserId', onDelete: 'CASCADE' });
 
 // An EndUser can have many Conversations
-Enduser.hasMany(Conversation, { foreignKey: 'endUserId', onDelete: 'CASCADE' });
+// Enduser.hasMany(Conversation, { foreignKey: 'endUserId', onDelete: 'CASCADE' });
 
 // Assign models to the db object
 db.models.User = User;
